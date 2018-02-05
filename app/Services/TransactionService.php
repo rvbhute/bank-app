@@ -37,17 +37,18 @@ class TransactionService
     /**
      * @param int $accountId
      * @param float $amount
+     * @param bool $accountClosing
      * @return Transaction|\Illuminate\Database\Eloquent\Model
      * @throws \Exception
      */
-    public function debitAccount(int $accountId, float $amount)
+    public function debitAccount(int $accountId, float $amount, $accountClosing=false)
     {
         // convert amount to paise, also convert it to negative
         $amount = (int) ($amount * -100);
         $account = $this->accounts->getAccount($accountId);
         $target = $account->balance + $amount;
 
-        if ($target < config('bank_app.minimum')) {
+        if (!$accountClosing && $target < config('bank_app.minimum')) {
             if ($account->allow_overdraft === false) {
                 throw new \Exception('Minimum balance violated.', 7000);
             }

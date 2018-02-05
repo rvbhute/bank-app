@@ -76,9 +76,34 @@ class AccountController extends Controller
         return response()->json(['account' => $account]);
     }
 
-    public function closeBankAccount()
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function closeBankAccount(Request $request)
     {
-        return response()->json(['message' => 'TBD']);
+        $this->validate($request, [
+            'account_id' => 'required|exists:accounts,id'
+        ]);
+
+        $accountId = $request->input('account_id');
+
+        try {
+            $account = $this->accounts->closeBankAccount($accountId);
+
+        } catch (\Exception $e) {
+            if ($e->getCode() === 7004) {
+                return response()->json(['message' => $e->getMessage()], 402);
+            }
+
+            throw $e;
+        }
+
+        return response()->json([
+            'message' => 'account closed',
+            'account' => $account
+        ]);
     }
 
 }

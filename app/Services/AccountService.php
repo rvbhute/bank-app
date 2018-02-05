@@ -4,14 +4,17 @@ namespace App\Services;
 
 use App\Models\Account;
 use App\Repositories\AccountRepository;
+use Illuminate\Support\Facades\DB;
 
 class AccountService
 {
     private $accounts;
+    private $transactionService;
 
-    public function __construct(AccountRepository $accountRepository)
+    public function __construct(AccountRepository $accountRepository, TransactionService $transactionService)
     {
         $this->accounts = $accountRepository;
+        $this->transactionService = $transactionService;
     }
 
     /**
@@ -69,6 +72,7 @@ class AccountService
 
     /**
      * @param int $accountId
+     * @return Account|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      * @throws \Exception
      */
     public function closeBankAccount(int $accountId)
@@ -78,5 +82,29 @@ class AccountService
         if ($account->balance < config('bank_app.minimum')) {
             throw new \Exception('Minimum balance violated', 7004);
         }
+
+        // withdraw everything
+        DB::beginTransaction();
+
+        try {
+            $target = (float)$account->balance / 100;
+            $txn = $this->transactionService->debitAccount($accountId, $target, true);
+
+            $account->balance = $txn->balance;
+            $account->active = false;
+
+            if (!$account->save()) {
+                throw new \Exception('Could not deactivate account.');
+            }
+
+            DB::commit();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            throw $e;
+        }
+
+        return $account;
     }
 }

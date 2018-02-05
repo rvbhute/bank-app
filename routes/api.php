@@ -19,7 +19,7 @@ Route::post('account', 'AccountController@openBankAccount');
 
 Route::group(['middleware' => ['active']], function () {
     Route::get('account', 'AccountController@viewBankAccount');
-    Route::delete('account', 'AccountController@closeBankAccount');
+    Route::post('account/delete', 'AccountController@closeBankAccount');
     Route::post('account/overdraft', 'AccountController@switchOverdraftFlag');
 
 
