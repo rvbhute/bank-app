@@ -17,9 +17,10 @@ Route::get('/', function () {
     return response()->json(['message' => 'Hi, this is the Bank App!']);
 });
 
-Route::post('user', 'UserController@openBankAccount');
-Route::delete('user', 'UserController@closeBankAccount');
+Route::post('users', 'UserController@openBankAccount');
+Route::post('users/overdraft', 'UserController@switchOverdraft');
+//Route::delete('user', 'UserController@closeBankAccount');
 
 Route::post('transactions/credit', 'TransactionController@creditAccount');
 Route::post('transactions/debit', 'TransactionController@debitAccount');
-Route::get('transactions', 'Transactioncontroller@getBalanceStatement');
+//Route::get('transactions', 'Transactioncontroller@getBalanceStatement');

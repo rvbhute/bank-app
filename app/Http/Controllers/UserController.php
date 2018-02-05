@@ -30,6 +30,40 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function switchOverdraft(Request $request)
+    {
+        $this->validate($request, [
+            'user_id' => 'required|exists:users,id',
+            'overdraft' => 'required|boolean'
+        ]);
+
+        $userId = $request->input('user_id');
+        $overdraft = $request->input('overdraft');
+
+        try {
+            $user = $this->accounts->updateOverdraftFacility($userId, $overdraft);
+
+        } catch (\Exception $e) {
+            if ($e->getCode() === 7001) {
+                return response()->json(['message' => $e->getMessage()], 402);
+            }
+
+            throw $e;
+        }
+
+        $verb = $user->allow_overdraft ? 'enabled' : 'disabled';
+
+        return response()->json([
+            'message' => "overdraft facility {$verb}",
+            'user' => $user
+        ]);
+    }
+
     public function closeBankAccount()
     {
         return response()->json(['message' => 'TBD']);
