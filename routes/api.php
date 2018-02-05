@@ -19,3 +19,7 @@ Route::get('/', function () {
 
 Route::post('user', 'UserController@openBankAccount');
 Route::delete('user', 'UserController@closeBankAccount');
+
+Route::post('transactions/credit', 'TransactionController@creditAccount');
+Route::post('transactions/debit', 'TransactionController@debitAccount');
+Route::get('transactions', 'Transactioncontroller@getBalanceStatement');

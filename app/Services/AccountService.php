@@ -14,7 +14,6 @@ class AccountService
         $this->users = $userRepository;
     }
 
-
     /**
      * @param string $name
      * @param string $email

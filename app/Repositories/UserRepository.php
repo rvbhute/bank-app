@@ -28,4 +28,16 @@ class UserRepository
 
         return $newUser;
     }
+
+    /**
+     * @param int $id
+     * @return User|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     */
+    public function getUser(int $id)
+    {
+        $user = $this->user->findOrFail($id);
+
+        return $user;
+    }
+
 }
