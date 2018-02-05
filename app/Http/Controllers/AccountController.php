@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\AccountService;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class AccountController extends Controller
 {
     private $accounts;
 
@@ -18,7 +18,7 @@ class UserController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users|max:255'
+            'email' => 'required|email|unique:accounts|max:255'
         ]);
 
         $data = $request->only(['name', 'email']);
@@ -35,18 +35,18 @@ class UserController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
-    public function switchOverdraft(Request $request)
+    public function switchOverdraftFlag(Request $request)
     {
         $this->validate($request, [
-            'user_id' => 'required|exists:users,id',
+            'account_id' => 'required|exists:accounts,id',
             'overdraft' => 'required|boolean'
         ]);
 
-        $userId = $request->input('user_id');
+        $accountId = $request->input('account_id');
         $overdraft = $request->input('overdraft');
 
         try {
-            $user = $this->accounts->updateOverdraftFacility($userId, $overdraft);
+            $account = $this->accounts->updateOverdraftFacility($accountId, $overdraft);
 
         } catch (\Exception $e) {
             if ($e->getCode() === 7001) {
@@ -56,24 +56,24 @@ class UserController extends Controller
             throw $e;
         }
 
-        $verb = $user->allow_overdraft ? 'enabled' : 'disabled';
+        $verb = $account->allow_overdraft ? 'enabled' : 'disabled';
 
         return response()->json([
             'message' => "overdraft facility {$verb}",
-            'user' => $user
+            'account' => $account
         ]);
     }
 
     public function viewBankAccount(Request $request)
     {
         $this->validate($request, [
-            'user_id' => 'required|exists:users,id'
+            'account_id' => 'required|exists:accounts,id'
         ]);
 
-        $userId = $request->input('user_id');
-        $userAccount = $this->accounts->getUserAccount($userId);
+        $accountId = $request->input('account_id');
+        $account = $this->accounts->getAccount($accountId);
 
-        return response()->json(['account' => $userAccount]);
+        return response()->json(['account' => $account]);
     }
 
     public function closeBankAccount()

@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,12 +15,15 @@ Route::get('/', function () {
     return response()->json(['message' => 'Hi, this is the Bank App!']);
 });
 
-Route::post('users', 'UserController@openBankAccount');
-Route::get('users', 'UserController@viewBankAccount');
-Route::delete('users', 'UserController@closeBankAccount');
-Route::post('users/overdraft', 'UserController@switchOverdraft');
+Route::post('account', 'AccountController@openBankAccount');
+
+Route::group(['middleware' => ['active']], function () {
+    Route::get('account', 'AccountController@viewBankAccount');
+    Route::delete('account', 'AccountController@closeBankAccount');
+    Route::post('account/overdraft', 'AccountController@switchOverdraftFlag');
 
 
-Route::post('transactions/credit', 'TransactionController@creditAccount');
-Route::post('transactions/debit', 'TransactionController@debitAccount');
-//Route::get('transactions', 'Transactioncontroller@getBalanceStatement');
+    Route::post('transactions/credit', 'TransactionController@creditAccount');
+    Route::post('transactions/debit', 'TransactionController@debitAccount');
+    //Route::get('transactions', 'Transactioncontroller@getBalanceStatement');
+});

@@ -23,20 +23,19 @@ class TransactionController extends Controller
     public function creditAccount(Request $request)
     {
         $this->validate($request, [
-            'user_id' => 'required|exists:users,id',
+            'account_id' => 'required|exists:accounts,id',
             'amount' => 'required|numeric|nonzero'
         ]);
 
-        $userId = $request->input('user_id');
+        $accountId = $request->input('account_id');
         $amount = $request->input('amount');
 
-        $txn = $this->transactions->creditAccount($userId, $amount);
+        $txn = $this->transactions->creditAccount($accountId, $amount);
 
         return response()->json([
             'message' => 'deposit successful',
             'transaction' => $txn
         ]);
-
     }
 
     /**
@@ -47,15 +46,15 @@ class TransactionController extends Controller
     public function debitAccount(Request $request)
     {
         $this->validate($request, [
-            'user_id' => 'required|exists:users,id',
+            'account_id' => 'required|exists:accounts,id',
             'amount' => 'required|numeric|nonzero'
         ]);
 
-        $userId = $request->input('user_id');
+        $accountId = $request->input('account_id');
         $amount = $request->input('amount');
 
         try {
-            $txn = $this->transactions->debitAccount($userId, $amount);
+            $txn = $this->transactions->debitAccount($accountId, $amount);
 
         } catch (\Exception $e) {
             if ($e->getCode() === 7000 || $e->getCode() === 7002) {

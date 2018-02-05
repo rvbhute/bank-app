@@ -2,68 +2,81 @@
 
 namespace App\Services;
 
-use App\Models\User;
-use App\Repositories\UserRepository;
+use App\Models\Account;
+use App\Repositories\AccountRepository;
 
 class AccountService
 {
-    private $users;
+    private $accounts;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(AccountRepository $accountRepository)
     {
-        $this->users = $userRepository;
+        $this->accounts = $accountRepository;
     }
 
     /**
      * @param string $name
      * @param string $email
-     * @return User
+     * @return Account
      */
     public function createNewAccount(string $name, string $email)
     {
-        $account = $this->users->createUser($name, $email);
+        $account = $this->accounts->createAccount($name, $email);
 
-        return $this->users->getUser($account->id);
+        return $this->accounts->getAccount($account->id);
     }
 
     /**
-     * @param int $userId
-     * @return User|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     * @param int $accountId
+     * @return Account|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
-    public function getUserAccount(int $userId)
+    public function getAccount(int $accountId)
     {
-        return $this->users->getUser($userId);
+        return $this->accounts->getAccount($accountId);
     }
 
     /**
-     * @param int $userId
+     * @param int $accountId
      * @param bool $overdraft
-     * @return User|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     * @return Account|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      * @throws \Exception
      */
-    public function updateOverdraftFacility(int $userId, bool $overdraft)
+    public function updateOverdraftFacility(int $accountId, bool $overdraft)
     {
-        $user = $this->users->getUser($userId);
+        $account = $this->accounts->getAccount($accountId);
 
         // return early if no change in flag
-        if ($user->allow_overdraft === $overdraft) {
-            return $user;
+        if ($account->allow_overdraft === $overdraft) {
+            return $account;
         }
 
         if ($overdraft) {
-            $user->allow_overdraft = true;
+            $account->allow_overdraft = true;
 
-        } elseif ($user->balance < config('bank_app.minimum')) {    // don't switch off if account is in red
+        } elseif ($account->balance < config('bank_app.minimum')) {    // don't switch off if account is in red
             throw new \Exception('Please ensure minimum balance to disable overdraft', 7001);
 
         } else {
-            $user->allow_overdraft = false;
+            $account->allow_overdraft = false;
         }
 
-        if (!$user->save()) {
+        if (!$account->save()) {
             throw new \Exception('Failed to update overdraft facility');
         }
 
-        return $user;
+        return $account;
+    }
+
+    /**
+     * @param int $accountId
+     * @throws \Exception
+     */
+    public function closeBankAccount(int $accountId)
+    {
+        $account = $this->accounts->getAccount($accountId);
+
+        if ($account->balance < config('bank_app.minimum')) {
+            throw new \Exception('Minimum balance violated', 7004);
+        }
     }
 }

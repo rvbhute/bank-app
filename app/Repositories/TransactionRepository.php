@@ -14,13 +14,13 @@ class TransactionRepository
     }
 
     /**
-     * @param int $userId
+     * @param int $accountId
      * @param int $amount
      * @param int $balance
      * @return Transaction|\Illuminate\Database\Eloquent\Model
      * @throws \Exception
      */
-    public function insertTransaction(int $userId, int $amount, int $balance)
+    public function insertTransaction(int $accountId, int $amount, int $balance)
     {
         if ($amount > 0) {
             $credit = $amount;
@@ -32,7 +32,7 @@ class TransactionRepository
         }
 
         $txn = $this->transaction->create([
-            'user_id' => $userId,
+            'account_id' => $accountId,
             'credit' => $credit,
             'debit' => $debit,
             'balance' => $balance + $amount
