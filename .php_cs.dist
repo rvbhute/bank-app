@@ -1,0 +1,18 @@
+<?php
+
+$finder = PhpCsFixer\Finder::create()
+    ->exclude('bootstrap')
+    ->exclude('storage')
+    ->exclude('vendor')
+    ->notPath('_ide_helper.php')
+    ->notPath('.phpstorm.meta.php')
+    ->notPath('server.php')
+    ->in(__DIR__)
+;
+
+return PhpCsFixer\Config::create()
+    ->setRules([
+        '@PSR2' => true,
+    ])
+    ->setFinder($finder)
+;
