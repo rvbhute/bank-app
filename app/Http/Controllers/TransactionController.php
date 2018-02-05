@@ -33,15 +33,42 @@ class TransactionController extends Controller
         $txn = $this->transactions->creditAccount($userId, $amount);
 
         return response()->json([
-            'message' => 'transaction successful',
+            'message' => 'deposit successful',
             'transaction' => $txn
         ]);
 
     }
 
-    public function debitAccount()
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function debitAccount(Request $request)
     {
+        $this->validate($request, [
+            'user_id' => 'required|exists:users,id',
+            'amount' => 'required|numeric|nonzero'
+        ]);
 
+        $userId = $request->input('user_id');
+        $amount = $request->input('amount');
+
+        try {
+            $txn = $this->transactions->debitAccount($userId, $amount);
+
+        } catch (\Exception $e) {
+            if ($e->getCode() === 7000) {
+                return response()->json(['message' => $e->getMessage()], 402);
+            }
+
+            throw $e;
+        }
+
+        return response()->json([
+            'message' => 'withdrawal successful',
+            'transaction' => $txn
+        ]);
     }
 
     public function getBalanceStatement()
