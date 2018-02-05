@@ -46,9 +46,16 @@ class TransactionService
         // convert amount to paise, also convert it to negative
         $amount = (int) ($amount * -100);
         $user = $this->users->getUser($userId);
+        $target = $user->balance + $amount;
 
-        if ($user->balance + $amount < config('bank_app.minimum')) {
-            throw new \Exception('Minimum balance violated.', 7000);
+        if ($target < config('bank_app.minimum')) {
+            if ($user->allow_overdraft === false) {
+                throw new \Exception('Minimum balance violated.', 7000);
+            }
+
+            if ($target + config('bank_app.overdraft') < config('bank_app.minimum')) {
+                throw new \Exception('Overdraft violated.', 7002);
+            }
         }
 
         return $this->startTransaction($amount, $user);

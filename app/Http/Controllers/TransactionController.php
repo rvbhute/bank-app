@@ -58,7 +58,7 @@ class TransactionController extends Controller
             $txn = $this->transactions->debitAccount($userId, $amount);
 
         } catch (\Exception $e) {
-            if ($e->getCode() === 7000) {
+            if ($e->getCode() === 7000 || $e->getCode() === 7002) {
                 return response()->json(['message' => $e->getMessage()], 402);
             }
 

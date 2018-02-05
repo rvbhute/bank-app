@@ -48,4 +48,13 @@ class User extends Authenticatable
     protected $hidden = [
         'api_token'
     ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'allow_overdraft' => 'boolean',
+    ];
 }

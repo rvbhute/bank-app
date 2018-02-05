@@ -37,7 +37,7 @@ class AccountService
         $user = $this->users->getUser($userId);
 
         // return early if no change in flag
-        if ($user->allow_overdraft == $overdraft) {
+        if ($user->allow_overdraft === $overdraft) {
             return $user;
         }
 
