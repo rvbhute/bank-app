@@ -4,12 +4,13 @@
 
 ````
 $ touch database/db.sqlite
+$ composer install
+$ cp .env.example .env
 ````
 
 Set the SQLite path in `DB_DATABASE` in `.env` file.
 
 ````
-$ composer install
 $ php artisan key:generate
 $ php artisan migrate --seed
 $ php artisan serve
