@@ -64,6 +64,18 @@ class UserController extends Controller
         ]);
     }
 
+    public function viewBankAccount(Request $request)
+    {
+        $this->validate($request, [
+            'user_id' => 'required|exists:users,id'
+        ]);
+
+        $userId = $request->input('user_id');
+        $userAccount = $this->accounts->getUserAccount($userId);
+
+        return response()->json(['account' => $userAccount]);
+    }
+
     public function closeBankAccount()
     {
         return response()->json(['message' => 'TBD']);

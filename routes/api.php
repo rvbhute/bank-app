@@ -18,8 +18,10 @@ Route::get('/', function () {
 });
 
 Route::post('users', 'UserController@openBankAccount');
+Route::get('users', 'UserController@viewBankAccount');
+Route::delete('users', 'UserController@closeBankAccount');
 Route::post('users/overdraft', 'UserController@switchOverdraft');
-//Route::delete('user', 'UserController@closeBankAccount');
+
 
 Route::post('transactions/credit', 'TransactionController@creditAccount');
 Route::post('transactions/debit', 'TransactionController@debitAccount');

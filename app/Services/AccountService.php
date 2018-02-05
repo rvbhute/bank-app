@@ -23,7 +23,16 @@ class AccountService
     {
         $account = $this->users->createUser($name, $email);
 
-        return $account;
+        return $this->users->getUser($account->id);
+    }
+
+    /**
+     * @param int $userId
+     * @return User|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     */
+    public function getUserAccount(int $userId)
+    {
+        return $this->users->getUser($userId);
     }
 
     /**
