@@ -22,7 +22,6 @@ Route::group(['middleware' => ['active']], function () {
     Route::post('account/delete', 'AccountController@closeBankAccount');
     Route::post('account/overdraft', 'AccountController@switchOverdraftFlag');
 
-
     Route::post('transactions/credit', 'TransactionController@creditAccount');
     Route::post('transactions/debit', 'TransactionController@debitAccount');
     //Route::get('transactions', 'Transactioncontroller@getBalanceStatement');
