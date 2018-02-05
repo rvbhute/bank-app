@@ -17,8 +17,9 @@ class CreateUsersTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('password');
-            $table->rememberToken();
+            $table->bigInteger('balance')->default(0);
+            $table->string('api_token')->unique()->nullable();
+            $table->boolean('allow_overdraft')->default(false);
             $table->timestamps();
         });
     }
