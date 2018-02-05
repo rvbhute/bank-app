@@ -18,7 +18,6 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->bigInteger('balance')->default(0);
-            $table->string('api_token')->unique()->nullable();
             $table->boolean('allow_overdraft')->default(false);
             $table->timestamps();
         });

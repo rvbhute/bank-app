@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/', function () {
+    return response()->json(['message' => 'Hi, this is the Bank App!']);
 });
+
+Route::post('user', 'UserController@openBankAccount');
+Route::delete('user', 'UserController@closeBankAccount');
